@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateSY01500STable extends Migration
 {
@@ -13,7 +14,8 @@ class CreateSY01500STable extends Migration
      */
     public function up()
     {
-        Schema::create('SY01500', function (Blueprint $table) {
+        DB::unprepared(file_get_contents('database/db/dynamics/tables/SY01500.sql'));
+        /* Schema::create('SY01500', function (Blueprint $table) {
             $table->char('LSTUSRED', 15);
             $table->datetime('CREATDDT');
             $table->datetime('MODIFDT');
@@ -48,10 +50,10 @@ class CreateSY01500STable extends Migration
             $table->tinyInteger('VATMODE')->length(3);
             $table->char('LOCATNID', 15);
             $table->char('INTERID', 5);
-            $table->char('ACSEGSEP', 1);
-            $table->binary('SECOPTS', 4);
+            $table->char('ACSEGSEP', 50);
+            $table->binary('SECOPTS', 50);
             $table->tinyInteger('DisplayRegisteredPalette')->length(3);
-            $table->binary('Company_Options', 4);
+            $table->binary('Company_Options', 50);
             $table->char('Vets100CompanyNumber', 21);
             $table->char('TYPEOFBUSINESS', 31);
             $table->char('DUNS_Number', 21);
@@ -72,7 +74,7 @@ class CreateSY01500STable extends Migration
             $table->tinyInteger('UseDateEffectiveTax');
             $table->smallInteger('DateToUse')->length(6);
             $table->integer('DEX_ROW_ID')->autoIncrement();
-        });
+        }); */
     }
 
     /**

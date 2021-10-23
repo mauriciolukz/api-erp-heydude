@@ -14,7 +14,7 @@ class CreateMC40200STable extends Migration
      */
     public function up()
     {
-        DB::unprepared(file_get_contents('database/db/dynamics/tables/MC402002.sql'));
+        DB::unprepared(file_get_contents('database/db/dynamics/tables/MC40200.sql'));
         /* Schema::create('MC40200', function (Blueprint $table) {
             $table->char('CURNCYID', 15);
             $table->smallInteger('CURRNIDX')->length(6);
