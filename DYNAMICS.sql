@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Oct 20, 2021 at 10:09 PM
+-- Generation Time: Oct 24, 2021 at 09:36 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.11
 
@@ -21,63 +21,21 @@ SET time_zone = "+00:00";
 -- Database: `DYNAMICS`
 --
 
-DELIMITER $$
+-- --------------------------------------------------------
+
 --
--- Procedures
+-- Table structure for table `failed_jobs`
 --
-CREATE DEFINER=`udyr0atmn7vmmvqf`@`%` PROCEDURE `smGetNextNoteIndex` (IN `p_I_sCompanyID` SMALLINT, IN `p_I_iSQLSessionID` INT, OUT `p_O_mNoteIndex` DECIMAL(19,5), OUT `p_O_iErrorState` INT)  sp_lbl:
- 
-BEGIN  
-	declare v_tTransaction tinyint unsigned;  
-	declare v_x INT;  
-	SET p_O_mNoteIndex = 0.0, p_O_iErrorState = 0,v_x = 0;
-	
-	if((p_I_sCompanyID is NULL) or  (p_I_iSQLSessionID is NULL)) then  
-		set  p_O_iErrorState = 20231;  
-		leave sp_lbl; 
-	end if;  
-	
-	if V_x = 0 then  
-		set v_tTransaction = 1;
-		START TRANSACTION; 
-	end if; 
-	
-	update   SY01500 SET  NOTEINDX = NOTEINDX + 1.0 where CMPANYID = p_I_sCompanyID;
-	SET p_O_mNoteIndex = (SELECT NOTEINDX FROM SY01500 where CMPANYID = p_I_sCompanyID);
-	
-	if (Found_rows() <> 1) then  
-		set p_O_iErrorState = 20081;  
-		if v_tTransaction = 1 then  
-			ROLLBACK;
-		end if;
-		leave sp_lbl;    
-	end if;
-	
-	if (p_O_mNoteIndex < 1) then  
-		set p_O_mNoteIndex = 1.0;
-	end if;
-	
-	if v_tTransaction = 1 then  
-		commit;
-	end if;  
-	
-    select 0 as retstat,p_O_mNoteIndex as param3,p_O_iErrorState as param4;
-	
-end$$
 
-CREATE DEFINER=`udyr0atmn7vmmvqf`@`%` PROCEDURE `zDP_MC40200SI` (IN `CURNCYID` CHAR(15), IN `CURRNIDX` SMALLINT(6), IN `NOTEINDX` DECIMAL(19,5), IN `CRNCYDSC` CHAR(31), IN `CRNCYSYM` CHAR(3), IN `CNYSYMAR_1` SMALLINT(6), IN `CNYSYMAR_2` SMALLINT(6), IN `CNYSYMAR_3` SMALLINT(6), IN `CYSYMPLC` SMALLINT(6), IN `INCLSPAC` TINYINT(4), IN `NEGSYMBL` SMALLINT(6), IN `NGSMAMPC` SMALLINT(6), IN `NEGSMPLC` SMALLINT(6), IN `DECSYMBL` SMALLINT(6), IN `DECPLCUR` SMALLINT(6), IN `THOUSSYM` SMALLINT(6), IN `CURTEXT_1` CHAR(25), IN `CURTEXT_2` CHAR(25), IN `CURTEXT_3` CHAR(25), IN `ISOCURRC` CHAR(3), IN `CURLNGID` SMALLINT(6), OUT `DEX_ROW_ID` INT)  BEGIN
-	INSERT INTO MC40200 (CURNCYID, CURRNIDX, NOTEINDX, CRNCYDSC, CRNCYSYM, CNYSYMAR_1, CNYSYMAR_2, CNYSYMAR_3, CYSYMPLC, INCLSPAC, NEGSYMBL, NGSMAMPC, NEGSMPLC, DECSYMBL, DECPLCUR, THOUSSYM, CURTEXT_1, CURTEXT_2, CURTEXT_3, ISOCURRC, CURLNGID, DEX_ROW_TS) 
-	VALUES              (CURNCYID, CURRNIDX, NOTEINDX, CRNCYDSC, CRNCYSYM, CNYSYMAR_1, CNYSYMAR_2, CNYSYMAR_3, CYSYMPLC, INCLSPAC, NEGSYMBL, NGSMAMPC, NEGSMPLC, DECSYMBL, DECPLCUR, THOUSSYM, CURTEXT_1, CURTEXT_2, CURTEXT_3, ISOCURRC, CURLNGID, NOW());
-	SET DEX_ROW_ID = LAST_INSERT_ID();
-	SELECT DEX_ROW_ID;
-END$$
-
-CREATE DEFINER=`udyr0atmn7vmmvqf`@`%` PROCEDURE `zDP_MC60100SS_1` (IN `CMPANYID_1` SMALLINT, IN `CURNCYID_1` CHAR(15))  BEGIN
-	SELECT CMPANYID, CURNCYID, INACTIVE, DEX_ROW_ID FROM MC60100 WHERE CMPANYID = CMPANYID_1 AND CURNCYID = CURNCYID_1  ORDER BY CMPANYID ASC, CURNCYID ASC LIMIT 1;
-
-END$$
-
-DELIMITER ;
+CREATE TABLE `failed_jobs` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `uuid` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `connection` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `queue` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `exception` longtext COLLATE utf8mb4_unicode_ci NOT NULL,
+  `failed_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -109,7 +67,7 @@ CREATE TABLE `MC40200` (
   `CURLNGID` smallint(6) NOT NULL,
   `DEX_ROW_TS` datetime NOT NULL,
   `DEX_ROW_ID` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `MC40200`
@@ -142,6 +100,50 @@ INSERT INTO `MC60100` (`CMPANYID`, `CURNCYID`, `INACTIVE`, `DEX_ROW_ID`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `migrations`
+--
+
+CREATE TABLE `migrations` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `migration` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `batch` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `migrations`
+--
+
+INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
+(1, '2014_10_12_000000_create_users_table', 1),
+(2, '2014_10_12_100000_create_password_resets_table', 1),
+(3, '2019_08_19_000000_create_failed_jobs_table', 1),
+(4, '2019_12_14_000001_create_personal_access_tokens_table', 1),
+(5, '2021_10_22_153336_create_m_c40200_s_table', 1),
+(6, '2021_10_22_154610_create_s_y01400_s_table', 1),
+(7, '2021_10_22_154659_create_s_y01500_s_table', 1),
+(8, '2021_10_24_190552_create_m_c60100_s_table', 2);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `personal_access_tokens`
+--
+
+CREATE TABLE `personal_access_tokens` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `tokenable_type` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tokenable_id` bigint(20) UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `abilities` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `last_used_at` timestamp NULL DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `SY01400`
 --
 
@@ -150,7 +152,7 @@ CREATE TABLE `SY01400` (
   `USERNAME` varchar(255) NOT NULL,
   `PASSWORD` varchar(255) NOT NULL,
   `DEX_ROW_ID` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `SY01400`
@@ -200,10 +202,10 @@ CREATE TABLE `SY01500` (
   `VATMODE` tinyint(3) UNSIGNED NOT NULL,
   `LOCATNID` char(15) NOT NULL,
   `INTERID` char(5) NOT NULL,
-  `ACSEGSEP` char(1) NOT NULL,
-  `SECOPTS` binary(4) NOT NULL,
+  `ACSEGSEP` char(50) NOT NULL,
+  `SECOPTS` binary(50) NOT NULL,
   `DisplayRegisteredPalette` tinyint(3) UNSIGNED NOT NULL,
-  `Company_Options` binary(4) NOT NULL,
+  `Company_Options` binary(50) NOT NULL,
   `Vets100CompanyNumber` char(21) NOT NULL,
   `TYPEOFBUSINESS` char(31) NOT NULL,
   `DUNS_Number` char(21) NOT NULL,
@@ -224,18 +226,25 @@ CREATE TABLE `SY01500` (
   `UseDateEffectiveTax` tinyint(3) UNSIGNED NOT NULL,
   `DateToUse` smallint(6) NOT NULL,
   `DEX_ROW_ID` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `SY01500`
 --
 
 INSERT INTO `SY01500` (`LSTUSRED`, `CREATDDT`, `MODIFDT`, `CMPANYID`, `CMPNYNAM`, `TAXEXMT1`, `TAXEXMT2`, `TAXREGTN`, `COPTXSCH`, `COSTXSCH`, `LOCATNNM`, `ADRCNTCT`, `ADDRESS1`, `ADDRESS2`, `ADDRESS3`, `CITY`, `COUNTY`, `STATE`, `ZIPCODE`, `PHONE1`, `PHONE2`, `PHONE3`, `FAXNUMBR`, `USESCRTY`, `UDCOSTR1`, `UDCOSTR2`, `CMPCNTRY`, `NOTEINDX`, `PPSFRNUM`, `PPSTAXRT`, `PPSVNDID`, `VATMODE`, `LOCATNID`, `INTERID`, `ACSEGSEP`, `SECOPTS`, `DisplayRegisteredPalette`, `Company_Options`, `Vets100CompanyNumber`, `TYPEOFBUSINESS`, `DUNS_Number`, `SICNUMBER`, `GOVCRPID`, `BRNCHNMBR`, `DFLTTXDTLID`, `PurchasesTaxDetailID`, `CCode`, `IVTRFDOCFMT`, `Offline_User`, `WORKFLOWENABLED`, `CrmCredentialsMethod`, `CrmOrganizationName`, `CrmServiceUrl`, `EnableGLReporting`, `EnableAAReporting`, `UseDateEffectiveTax`, `DateToUse`, `DEX_ROW_ID`) VALUES
-('sa', '2020-09-19 06:53:33', '2020-09-19 06:53:34', 1, 'HEYDUDE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 0, '', '', '', '128.00000', '0', 0, '0', 0, '0', '0', '0', 0x30000000, 0, 0x30000000, '0', '0', '0', '0', '0', '0', '0', '0', '0', 0, '0', 0, 0, '0', '0', 0, 0, 0, 0, 1);
+('sa', '2019-12-09 00:00:00', '2019-12-09 00:00:00', 1, 'HEYDUDE', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', 1, '', '', '', '116.00000', '0', 0, '0', 0, '0', '0', '0', 0x3078303030303030303000000000000000000000000000000000000000000000000000000000000000000000000000000000, 0, 0x3078303134303030303000000000000000000000000000000000000000000000000000000000000000000000000000000000, '\'0\'', '0', '0', '0', '0', '0', '0', '0', '0', 0, '0', 0, 0, '0', '0', 0, 0, 0, 0, 1);
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
 
 --
 -- Indexes for table `MC40200`
@@ -244,11 +253,18 @@ ALTER TABLE `MC40200`
   ADD PRIMARY KEY (`DEX_ROW_ID`);
 
 --
--- Indexes for table `MC60100`
+-- Indexes for table `migrations`
 --
-ALTER TABLE `MC60100`
-  ADD PRIMARY KEY (`CMPANYID`,`CURNCYID`),
-  ADD KEY `DEX_ROW_ID` (`DEX_ROW_ID`);
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `personal_access_tokens_token_unique` (`token`),
+  ADD KEY `personal_access_tokens_tokenable_type_tokenable_id_index` (`tokenable_type`,`tokenable_id`);
 
 --
 -- Indexes for table `SY01400`
@@ -267,16 +283,28 @@ ALTER TABLE `SY01500`
 --
 
 --
+-- AUTO_INCREMENT for table `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `MC40200`
 --
 ALTER TABLE `MC40200`
-  MODIFY `DEX_ROW_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `DEX_ROW_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
--- AUTO_INCREMENT for table `MC60100`
+-- AUTO_INCREMENT for table `migrations`
 --
-ALTER TABLE `MC60100`
-  MODIFY `DEX_ROW_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `personal_access_tokens`
+--
+ALTER TABLE `personal_access_tokens`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `SY01400`
